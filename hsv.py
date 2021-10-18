@@ -54,7 +54,8 @@ def hsv(img: str):
 
     # Spawn GUI
     draw()
-    cv2.waitKey(0)
+    while not (cv2.waitKey(25) & 0xFF == ord("q")):
+        pass
 
     # Cleanup
     cv2.destroyAllWindows()
