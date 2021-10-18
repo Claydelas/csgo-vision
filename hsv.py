@@ -1,10 +1,7 @@
 import cv2
 import numpy as np
 import sys
-
-
-def __skip__(x):
-    pass
+from functools import partial
 
 
 def hsv(img: str):
@@ -14,32 +11,23 @@ def hsv(img: str):
     # Create a window
     cv2.namedWindow('image')
 
-    # Create trackbars for color change
-    # Hue is from 0-179 for Opencv
-    cv2.createTrackbar('HMin', 'image', 0, 179, __skip__)
-    cv2.createTrackbar('SMin', 'image', 0, 255, __skip__)
-    cv2.createTrackbar('VMin', 'image', 0, 255, __skip__)
-    cv2.createTrackbar('HMax', 'image', 0, 179, __skip__)
-    cv2.createTrackbar('SMax', 'image', 0, 255, __skip__)
-    cv2.createTrackbar('VMax', 'image', 0, 255, __skip__)
+    # Initialise default HSV values
+    vals = {"HMin": 0, "SMin": 0, "VMin": 0, "HMax": 179, "SMax":255, "VMax": 255}
 
-    # Set default value for Max HSV trackbars
-    cv2.setTrackbarPos('HMax', 'image', 179)
-    cv2.setTrackbarPos('SMax', 'image', 255)
-    cv2.setTrackbarPos('VMax', 'image', 255)
+    def onChange(key, new):
+        # Change HSV val to the new value
+        vals[key] = new
+        # Re-draw image
+        draw()
 
-    # Initialize HSV min/max values
-    hMin = sMin = vMin = hMax = sMax = vMax = 0
-    phMin = psMin = pvMin = phMax = psMax = pvMax = 0
-
-    while(True):
+    def draw():
         # Get current positions of all trackbars
-        hMin = cv2.getTrackbarPos('HMin', 'image')
-        sMin = cv2.getTrackbarPos('SMin', 'image')
-        vMin = cv2.getTrackbarPos('VMin', 'image')
-        hMax = cv2.getTrackbarPos('HMax', 'image')
-        sMax = cv2.getTrackbarPos('SMax', 'image')
-        vMax = cv2.getTrackbarPos('VMax', 'image')
+        hMin = vals['HMin']
+        sMin = vals['SMin']
+        vMin = vals['VMin']
+        hMax = vals['HMax']
+        sMax = vals['SMax']
+        vMax = vals['VMax']
 
         # Set minimum and maximum HSV values to display
         lower = np.array([hMin, sMin, vMin])
@@ -50,22 +38,25 @@ def hsv(img: str):
         mask = cv2.inRange(hsv, lower, upper)
         result = cv2.bitwise_and(image, image, mask=mask)
 
-        # Print if there is a change in HSV value
-        if phMin != hMin | psMin != sMin | pvMin != vMin | phMax != hMax | psMax != sMax | pvMax != vMax:
-            print(
-                f'(hMin = {hMin} , sMin = {sMin}, vMin = {vMin}), (hMax = {hMax} , sMax = {sMax}, vMax = {vMax})')
-            phMin = hMin
-            psMin = sMin
-            pvMin = vMin
-            phMax = hMax
-            psMax = sMax
-            pvMax = vMax
-
+        print(f'(hMin = {hMin} , sMin = {sMin}, vMin = {vMin}), (hMax = {hMax} , sMax = {sMax}, vMax = {vMax})')
+        
         # Display result image
         cv2.imshow('image', result)
-        if cv2.waitKey(10) & 0xFF == ord('q'):
-            break
 
+    # Create trackbars for color change
+    # Hue is from 0-179 for Opencv
+    cv2.createTrackbar('HMin', 'image', 0, 179, partial(onChange,"HMin"))
+    cv2.createTrackbar('SMin', 'image', 0, 255, partial(onChange,"SMin"))
+    cv2.createTrackbar('VMin', 'image', 0, 255, partial(onChange,"VMin"))
+    cv2.createTrackbar('HMax', 'image', 179, 179, partial(onChange,"HMax"))
+    cv2.createTrackbar('SMax', 'image', 255, 255, partial(onChange,"SMax"))
+    cv2.createTrackbar('VMax', 'image', 255, 255, partial(onChange,"VMax"))
+
+    # Spawn GUI
+    draw()
+    cv2.waitKey(0)
+
+    # Cleanup
     cv2.destroyAllWindows()
     return 0
 
