@@ -24,12 +24,13 @@ def video_to_annotated_frames(vid, obj_class):
     while success:
         stream.set(cv2.CAP_PROP_POS_MSEC, (count*1000))
         image, (x, y, w, h) = annotate_frame(image)
+        ih, iw, _ = image.shape
         name = f'frames/{os.path.basename(vid).split(".")[0]}-{count}'
         # Save video frame as image
         cv2.imwrite(f'{name}.jpg', image)
         # Save image annotation as YOLO format
         with open(f'{name}.txt', 'w') as f:
-            f.write(f'{obj_class} {x} {y} {w} {h}')
+            f.write(f'{obj_class} {x/iw} {y/ih} {w/iw} {h/ih}')
         count += 1
         success, image = stream.read()
     return 0
