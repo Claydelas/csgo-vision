@@ -1,0 +1,8 @@
+path: data  # dataset root dir
+train: images  # train images (relative to 'path')
+val: images  # val images (relative to 'path')
+test:  # test images
+
+# Classes
+nc: 2  # number of classes
+names: [ 't', 'ct' ]  # class names

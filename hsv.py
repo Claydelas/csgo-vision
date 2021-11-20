@@ -9,7 +9,8 @@ def hsv(img: str):
     image = cv2.imread(img)
 
     # Create a window
-    cv2.namedWindow('image')
+    cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('image', 1920, 1080)
 
     # Initialise default HSV values
     vals = {"HMin": 0, "SMin": 0, "VMin": 0, "HMax": 179, "SMax":255, "VMax": 255}
@@ -39,7 +40,19 @@ def hsv(img: str):
         result = cv2.bitwise_and(image, image, mask=mask)
 
         print(f'(hMin = {hMin} , sMin = {sMin}, vMin = {vMin}), (hMax = {hMax} , sMax = {sMax}, vMax = {vMax})')
-        
+        # Retrieve all contours
+        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        # Draw all contours (thin lines)
+        cv2.drawContours(result, contours, -1, (0,0,180), 1)
+
+        # Find the largest bounding box
+        areas = [cv2.contourArea(c) for c in contours]
+        bbox = contours[np.argmax(areas)]
+        # Draw the largest one (thick lines)
+        x, y, w, h = cv2.boundingRect(bbox)
+        cv2.rectangle(result, (x,y), (x+w,y+h), (0,0,255), 3)
+
         # Display result image
         cv2.imshow('image', result)
 
