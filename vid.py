@@ -34,7 +34,7 @@ def video_to_annotated_frames(vid, obj_class):
         cv2.imwrite(f'data/images/{name}.jpg', image)
         # Save image annotation as YOLO format
         with open(f'data/labels/{name}.txt', 'w') as f:
-            f.write(f'{obj_class} {x/iw} {y/ih} {w/iw} {h/ih}')
+            f.write(f'{obj_class} {(x + w/2)/iw} {(y + h/2)/ih} {w/iw} {h/ih}')
         count += 1
         success, image = stream.read()
     return 0

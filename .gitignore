@@ -2,3 +2,4 @@ videos
 frames
 *.cache
 _*
+.vscode
