@@ -20,4 +20,4 @@ def annotate_frame(img):
     # x, y, w, h = cv2.boundingRect(bbox)
     # cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
 
-    return (img, cv2.boundingRect(bbox))
+    return cv2.boundingRect(bbox)

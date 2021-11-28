@@ -7,7 +7,7 @@ from pathlib import Path
 
 Path('out').mkdir(exist_ok=True)
 
-# This would need a second, body part segmentation pass,
+# This would need another, body part segmentation pass,
 # to figure out the position of the player model's head
 def detect(model, img):
     res = model(img)
