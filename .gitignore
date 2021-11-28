@@ -3,3 +3,4 @@ frames
 *.cache
 _*
 .vscode
+out
